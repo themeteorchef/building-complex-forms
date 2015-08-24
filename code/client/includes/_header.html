@@ -8,10 +8,16 @@
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	      </button>
-	      <a class="navbar-brand" href="{{pathFor 'index'}}">Base</a>
+	      <a class="navbar-brand" href="{{pathFor 'index'}}">Pizza Planet</a>
 	    </div>
 	    <div id="bs-example-navbar-collapse-1" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li class="{{currentRoute 'order'}}"><a href="{{pathFor 'order'}}">Order Now</a></li>
+				</ul>
 	    	{{#if currentUser}}
+				<ul class="nav navbar-nav">
+					<li class="{{currentRoute 'profile'}}"><a href="{{pathFor 'profile'}}">Pizza Profile</a></li>
+				</ul>
 	      <ul class="nav navbar-nav navbar-right">
 	        <li class="dropdown">
 	          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{currentUser.emails.[0].address}} <span class="caret"></span></a>
@@ -22,8 +28,8 @@
 	      </ul>
 	      {{else}}
 	      <ul class="nav navbar-nav navbar-right">
-	        <li class="{{currentRoute 'login'}}"><a href="{{pathFor 'login'}}">Login</a></li>
-	        <li class="{{currentRoute 'signup'}}"><a href="{{pathFor 'signup'}}">Sign Up</a></li>
+	        <li class="{{currentRoute 'login'}}"><a href="{{pathFor 'login'}}">Sign In</a></li>
+	        <li class="{{currentRoute 'signup'}}"><a href="{{pathFor 'signup'}}">Get a Pizza Profile</a></li>
 	      </ul>
 	      {{/if}}
 	    </div> <!-- end .navbar-collapse -->

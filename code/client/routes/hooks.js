@@ -15,7 +15,7 @@
 
 checkUserLoggedIn = function(){
   if( !Meteor.loggingIn() && !Meteor.user() ) {
-    Router.go('/login');
+    Router.go('/');
   } else {
     this.next();
   }
@@ -29,7 +29,7 @@ checkUserLoggedIn = function(){
 
 userAuthenticated = function(){
   if( !Meteor.loggingIn() && Meteor.user() ){
-    Router.go('/');
+    Router.go( '/profile' );
   } else {
     this.next();
   }
@@ -39,8 +39,10 @@ userAuthenticated = function(){
 * Run Hooks
 */
 
-Router.onBeforeAction(checkUserLoggedIn, {
+Router.onBeforeAction( checkUserLoggedIn, {
   except: [
+    'order',
+    'index',
     'signup',
     'login',
     'recover-password',
@@ -48,8 +50,9 @@ Router.onBeforeAction(checkUserLoggedIn, {
   ]
 });
 
-Router.onBeforeAction(userAuthenticated, {
+Router.onBeforeAction( userAuthenticated, {
   only: [
+    'index',
     'signup',
     'login',
     'recover-password',

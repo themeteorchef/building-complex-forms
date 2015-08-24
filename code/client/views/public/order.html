@@ -1,0 +1,40 @@
+<template name="order">
+  <div class="jumbotron text-center">
+    <h2>Place an Order</h2>
+    <p>Tell us what pizza you want and we'll put in our rocketship to you in less than 30 minutes!</p>
+  </div>
+  <h3 class="page-header">How do you want to order?</h3>
+
+  <div class="form-group">
+    <p>Pick a category to choose from, or build a custom pizza and save it for later!</p>
+  </div>
+
+  <ul class="nav nav-tabs" role="tablist">
+    {{#if currentUser}}
+      <li role="presentation" class="active"><a href="#my-pizzas" aria-controls="my-pizzas" role="tab" data-toggle="tab">My Pizzas</a></li>
+      <li role="presentation"><a href="#popular-pizzas" aria-controls="popular-pizzas" role="tab" data-toggle="tab">Popular Pizzas</a></li>
+    {{else}}
+      <li role="presentation" class="active"><a href="#popular-pizzas" aria-controls="popular-pizzas" role="tab" data-toggle="tab">Popular Pizzas</a></li>
+    {{/if}}
+    <li role="presentation"><a href="#custom-pizza" aria-controls="custom-pizza" role="tab" data-toggle="tab">Build a Pizza</a></li>
+  </ul>
+
+  <div class="tab-content">
+    {{#if currentUser}}
+      <div role="tabpanel" class="tab-pane active" id="my-pizzas">
+        {{> Template.dynamic template="pizzaList" data="order"}}
+      </div>
+      <div role="tabpanel" class="tab-pane" id="popular-pizzas">
+        {{> popularPizzas}}
+      </div>
+    {{else}}
+      <div role="tabpanel" class="tab-pane active" id="popular-pizzas">
+        {{> popularPizzas}}
+      </div>
+    {{/if}}
+    <div role="tabpanel" class="tab-pane" id="custom-pizza">
+      {{> buildPizza}}
+    </div>
+  </div>
+
+</template>

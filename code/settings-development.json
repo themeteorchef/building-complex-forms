@@ -1,8 +1,41 @@
 {
   "public": {
-    "key": "value"
-  },
-  "private": {
-    "key": "value"
+    "toppings": {
+      "meats": [
+        "Sausage",
+        "Pepperoni",
+        "Bacon",
+        "Ham",
+        "Beef"
+      ],
+      "nonMeats": [
+        "Banana Peppers",
+        "Green Peppers",
+        "Mushrooms",
+        "Black Olives",
+        "Onions",
+        "Feta Cheese",
+        "Jalapeno Peppers",
+        "Pineapple"
+      ]
+    },
+    "crust": [
+      "Regular",
+      "Thin",
+      "Deep Dish",
+      "Pan"
+    ],
+    "sauce": [
+      "Tomato",
+      "Roboust Tomato",
+      "Alfredo",
+      "Barbecue"
+    ],
+    "size": [
+      10,
+      12,
+      14,
+      16
+    ]
   }
 }

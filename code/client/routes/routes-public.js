@@ -3,6 +3,24 @@
 * Routes that are visible to all (public) users.
 */
 
+Router.route( 'index', {
+  path: '/',
+  template: 'index',
+  onBeforeAction: function(){
+    Session.set( 'currentRoute', 'index' );
+    this.next();
+  }
+});
+
+Router.route( 'order', {
+  path: '/order',
+  template: 'order',
+  onBeforeAction: function(){
+    Session.set( 'currentRoute', 'order' );
+    this.next();
+  }
+});
+
 Router.route('signup', {
   path: '/signup',
   template: 'signup',

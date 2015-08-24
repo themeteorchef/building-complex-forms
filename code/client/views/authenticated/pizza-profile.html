@@ -1,0 +1,12 @@
+<template name="pizzaProfile">
+  <div class="jumbotron text-center">
+    <h2>Welcome aboard, pizza pilot!</h2>
+    <p>Review and update your information below or blast off with a new order.</p>
+    <p><a class="btn btn-success btn-lg" href="{{pathFor 'order'}}" role="button">Start an Order</a></p>
+  </div>
+  <h4 class="page-header">Custom Pizzas</h4>
+  {{> Template.dynamic template="pizzaList" data="profile"}}
+
+  <h4 class="page-header">Contact Information</h4>
+  {{> contactInformation}}
+</template>

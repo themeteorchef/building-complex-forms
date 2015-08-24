@@ -12,4 +12,12 @@ Meteor.startup(function(){
   // Generate Test Accounts
   generateTestAccounts();
 
+  /*
+   For example. We've created an example array of "Popular Pizzas" that we can
+   insert into the app on startup.
+
+   See how it works: /server/startup-functions/create-pizzas.js.
+  */
+  createPizzas();
+
 });
