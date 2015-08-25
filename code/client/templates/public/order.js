@@ -10,7 +10,7 @@ Template.order.onCreated( function() {
 });
 
 Template.order.onRendered( function() {
-
+  
   var template = Template.instance();
 
   $( "#place-order" ).validate({
@@ -35,6 +35,14 @@ Template.order.onRendered( function() {
       },
       zipCode: {
         required: true
+      },
+      emailAddress: {
+        required: true,
+        email: true
+      },
+      password: {
+        required: true,
+        minlength: 6
       }
     },
     submitHandler: function() {
@@ -55,10 +63,14 @@ Template.order.onRendered( function() {
           state: template.find( "[name='state']" ).value,
           zipCode: template.find( "[name='zipCode']" ).value
         }
+
+        order.credentials = {
+          emailAddress: template.find( "[name='emailAddress']").value,
+          password: template.find( "[name='password']").value
+        }
       }
 
       if ( type === "Custom Pizza" ) {
-
         var meatToppings    = [],
             nonMeatToppings = [];
 

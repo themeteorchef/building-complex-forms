@@ -19,6 +19,12 @@
       {{> Template.dynamic template="contactInformation"}}
     {{/with}}
 
+    {{#unless currentUser}}
+      <h3 class="page-header">Create a pizza profile</h3>
+      <p>Specify a username and password for your pizza profile. This is <strong>required to place your order</strong>.</p>
+      {{> profileSignup}}
+    {{/unless}}
+
     <h3 class="page-header">Confirm and send your order</h3>
     {{#with order}}
       {{> orderConfirmation}}
