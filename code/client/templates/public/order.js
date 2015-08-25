@@ -10,7 +10,7 @@ Template.order.onCreated( function() {
 });
 
 Template.order.onRendered( function() {
-  
+
   var template = Template.instance();
 
   $( "#place-order" ).validate({
@@ -99,10 +99,15 @@ Template.order.onRendered( function() {
         Bert.alert( "Make sure to pick a pizza!", "warning" );
       } else {
         order.pizza = pizza._id ? pizza._id : customPizza;
+
+        Meteor.call( "placeOrder", order, function( error, response ) {
+          if ( error ) {
+            Bert.alert( error.reason, "danger" );
+          } else {
+            Bert.alert( "Order submitted!", "success" );
+          }
+        });
       }
-
-      console.log( order );
-
     }
   });
 
@@ -110,7 +115,6 @@ Template.order.onRendered( function() {
 
 Template.order.helpers({
   customer: function() {
-
     if ( Meteor.userId() ) {
       var getCustomer = Customers.findOne( { "userId": Meteor.userId() } );
     } else {
