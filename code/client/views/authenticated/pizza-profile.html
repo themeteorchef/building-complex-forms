@@ -5,8 +5,10 @@
     <p><a class="btn btn-success btn-lg" href="{{pathFor 'order'}}" role="button">Start an Order</a></p>
   </div>
   <h4 class="page-header">Custom Pizzas</h4>
-  {{> Template.dynamic template="pizzaList" data="profile"}}
+  {{> Template.dynamic template="pizzaList" data=myPizzas}}
 
   <h4 class="page-header">Contact Information</h4>
-  {{> contactInformation}}
+  {{#with customer}}
+    {{> Template.dynamic template="contactInformation"}}
+  {{/with}}
 </template>

@@ -1,13 +1,17 @@
-Meteor.publish( 'pizzaProfile', function(){
+Meteor.publish( 'order', function(){
   // If need be, Meteor gives us access to the current user via this.userId.
   // Example below shows using this.userId to locate documents where the
   // owner field is equal to a userId.
   var user = this.userId;
 
-  var data = [
-    Pizza.find( { "ownerId": user } ),
-    Customers.find( { "userId": user } )
-  ];
+  if ( user ) {
+    var data = [
+      Pizza.find(),
+      Customers.find( { "userId": user } )
+    ];
+  } else {
+    var data = Pizza.find( { "custom": false } );
+  }
 
   if ( data ) {
     return data;

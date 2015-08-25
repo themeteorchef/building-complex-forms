@@ -19,13 +19,13 @@
         "Pineapple"
       ]
     },
-    "crust": [
+    "crusts": [
       "Regular",
       "Thin",
       "Deep Dish",
       "Pan"
     ],
-    "sauce": [
+    "sauces": [
       "Tomato",
       "Roboust Tomato",
       "Alfredo",

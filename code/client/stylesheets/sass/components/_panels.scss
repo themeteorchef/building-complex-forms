@@ -1,5 +1,32 @@
-.panel.selected {
+.panel.selected,
+.panel.selected:hover {
   background-color: #d9edf7;
   border-color: #bce8f1;
   color: #31708f;
+
+  .table-bordered,
+  .table-bordered > thead > tr > th,
+  .table-bordered > tbody > tr > th,
+  .table-bordered > thead > tr > td,
+  .table-bordered > tbody > tr > td {
+    border-color: #bce8f1;
+    color: #31708f;
+  }
+}
+
+.panel .panel-body p:last-child {
+  margin-bottom: 0px;
+}
+
+.panel:hover {
+  cursor: pointer;
+  background: #eee;
+}
+
+.panel table {
+  margin-bottom: 0px;
+}
+
+.panel table + .btn {
+  margin-top: 20px;
 }

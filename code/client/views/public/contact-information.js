@@ -1,15 +1,11 @@
 Template.contactInformation.helpers({
-  contactInformation: function() {
-    var getCustomer = Customers.findOne( { "userId": Meteor.userId() } );
-
-    if ( getCustomer ) {
-      return getCustomer;
-    }
+  isProfile: function( location ) {
+    return Template.instance().data.context === "profile" ? true : false;
   }
 });
 
 Template.contactInformation.events({
-  'submit form': function( event, template ) {
+  'click input[type="submit"]': function( event, template ) {
     event.preventDefault();
 
     var customer = {

@@ -1,0 +1,29 @@
+<template name="pizzaCategories">
+  <ul class="nav nav-tabs" role="tablist">
+    {{#if currentUser}}
+      <li role="presentation" data-pizza-type="My Pizzas" class="active"><a href="#my-pizzas" aria-controls="my-pizzas" role="tab" data-toggle="tab">My Custom Pizzas</a></li>
+      <li role="presentation" data-pizza-type="Popular Pizzas"><a href="#popular-pizzas" aria-controls="popular-pizzas" role="tab" data-toggle="tab">Popular Pizzas</a></li>
+    {{else}}
+      <li role="presentation" data-pizza-type="Popular Pizzas" class="active"><a href="#popular-pizzas" aria-controls="popular-pizzas" role="tab" data-toggle="tab">Popular Pizzas</a></li>
+    {{/if}}
+    <li role="presentation" data-pizza-type="Custom Pizza"><a href="#custom-pizza" aria-controls="custom-pizza" role="tab" data-toggle="tab">Build a Pizza</a></li>
+  </ul>
+
+  <div class="tab-content">
+    {{#if currentUser}}
+      <div role="tabpanel" class="tab-pane active" id="my-pizzas">
+        {{> Template.dynamic template="pizzaList" data=myPizzas}}
+      </div>
+      <div role="tabpanel" class="tab-pane" id="popular-pizzas">
+        {{> Template.dynamic template="pizzaList" data=popularPizzas}}
+      </div>
+    {{else}}
+      <div role="tabpanel" class="tab-pane active" id="popular-pizzas">
+        {{> Template.dynamic template="pizzaList" data=popularPizzas}}
+      </div>
+    {{/if}}
+    <div role="tabpanel" class="tab-pane" id="custom-pizza">
+      {{> buildPizza}}
+    </div>
+  </div>
+</template>

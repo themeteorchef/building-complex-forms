@@ -1,0 +1,22 @@
+<template name="orderConfirmation">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Pizza</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{#if type}}{{type}} &mdash; {{/if}}{{pizza.name}}</td>
+        <td class="text-right">{{toUsd price}}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td class="text-right">Total</td>
+        <td class="text-right">{{toUsd price}}</td>
+      </tr>
+    </tfoot>
+  </table>
+</template>

@@ -1,3 +1,53 @@
 <template name="buildPizza">
-  <h3>Build a Pizza</h3>
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label>Custom Pizza Name </label>
+            <input type="text" class="form-control" name="customPizzaName">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group clearfix">
+          <div class="col-xs-12 col-sm-6">
+            <h4 class="page-header">Crust</h4>
+            <select name="crust" class="form-control">
+            {{#each crusts}}
+              <option value="{{this}}">{{this}}</option>
+            {{/each}}
+            </select>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <h4 class="page-header">Sauce</h4>
+            <select name="sauce" class="form-control">
+            {{#each sauces}}
+              <option value="{{this}}">{{this}}</option>
+            {{/each}}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12">
+          <h4 class="page-header">Toppings</h4>
+          <div class="row">
+            <div class="col-xs-12 col-sm-6">
+              <h5 class="page-header">Meats</h5>
+              {{#each toppings.meats}}
+                <label class="topping"><input type="checkbox" name="toppingsMeats" value="{{this}}"> {{this}}</label>
+              {{/each}}
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <h5 class="page-header">Non-Meats</h5>
+              {{#each toppings.nonMeats}}
+                <label class="topping"><input type="checkbox" name="toppingsNonMeats" value="{{this}}"> {{this}}</label>
+              {{/each}}
+            </div>
+          </div> <!-- Holy-->
+        </div> <!-- Nested -->
+      </div> <!-- Div's -->
+    </div> <!-- Batman! -->
+  </div> <!-- Batman! -->
 </template>

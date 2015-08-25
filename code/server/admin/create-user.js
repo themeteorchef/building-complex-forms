@@ -16,7 +16,7 @@ Accounts.onCreateUser( function( options, user ) {
     telephone: ""
   };
 
-  if ( options.profile.customer ) {
+  if ( options.profile && options.profile.customer ) {
     customer        = options.profile.customer;
     customer.userId = user._id;
 

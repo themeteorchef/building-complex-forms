@@ -1,0 +1,43 @@
+<template name="pizza">
+  <div class="panel panel-default pizza">
+    <div class="panel-body">
+      <p class="clearfix">
+        <strong class="pull-left">{{#unless isProfile}}<input type="checkbox" name="selectCustomPizza" value="{{_id}}"> {{/unless}} {{name}}</strong>
+        {{#if isProfile}}<a class="pull-right remove-pizza" href="#">Delete this Pizza</a>{{/if}}
+      </p>
+
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Size</th>
+            <th>Crust</th>
+            <th>Sauce</th>
+            <th>Meat Toppings</th>
+            <th>Non-Meat Toppigns</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{size}}"</td>
+            <td>{{crust}}</td>
+            <td>{{sauce}}</td>
+            <td>
+              {{#if toppings.meats}}
+                {{toCommaString toppings.meats}}
+              {{else}}
+                <em>No meat toppings.</em>
+              {{/if}}
+            </td>
+            <td>
+              {{#if toppings.nonMeats}}
+                {{toCommaString toppings.nonMeats}}
+              {{else}}
+                <em class="text-muted">No non-meat toppings.</em>
+              {{/if}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
