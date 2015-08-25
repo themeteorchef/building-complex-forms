@@ -2,7 +2,7 @@
   <div class="panel panel-default pizza">
     <div class="panel-body">
       <p class="clearfix">
-        <strong class="pull-left">{{#unless isProfile}}<input type="checkbox" name="selectCustomPizza" value="{{_id}}"> {{/unless}} {{name}}</strong>
+        <strong class="pull-left">{{#unless isProfile}}<input hidden type="checkbox" name="selectCustomPizza" value="{{_id}}"> {{/unless}} {{name}} &mdash; {{toUsd price}}</strong>
         {{#if isProfile}}<a class="pull-right remove-pizza" href="#">Delete this Pizza</a>{{/if}}
       </p>
 
