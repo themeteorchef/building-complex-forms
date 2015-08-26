@@ -4,6 +4,9 @@
     <p>Review and update your information below or blast off with a new order.</p>
     <p><a class="btn btn-success btn-lg" href="{{pathFor 'order'}}" role="button">Start an Order</a></p>
   </div>
+  <h4 class="page-header">Your Orders</h4>
+  {{> orders}}
+
   <h4 class="page-header">Custom Pizzas</h4>
   {{> Template.dynamic template="pizzaList" data=myPizzas}}
 

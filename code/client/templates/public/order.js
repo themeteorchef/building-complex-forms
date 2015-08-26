@@ -52,7 +52,7 @@ Template.order.onRendered( function() {
           order     = {};
 
       if ( Meteor.user() ) {
-        order.customer = Customers.findOne( { "userId": Meteor.userId() }, { fields: { "_id": 1 } } );
+        order.customer = Meteor.userId();
       } else {
         order.customer = {
           name: template.find( "[name='name']" ).value,
@@ -65,7 +65,7 @@ Template.order.onRendered( function() {
         }
 
         order.credentials = {
-          emailAddress: template.find( "[name='emailAddress']").value,
+          email: template.find( "[name='emailAddress']").value,
           password: template.find( "[name='password']").value
         }
       }
@@ -84,6 +84,7 @@ Template.order.onRendered( function() {
 
         var customPizza = {
           name: template.find( "[name='customPizzaName']" ).value,
+          size: template.find( "[name='size'] option:selected" ).value,
           crust: template.find( "[name='crust'] option:selected" ).value,
           sauce: template.find( "[name='sauce'] option:selected" ).value,
           toppings: {
@@ -91,7 +92,7 @@ Template.order.onRendered( function() {
             nonMeats: nonMeatToppings
           },
           custom: true,
-          ownerId: Meteor.userId() || null
+          price: 10000
         };
       }
 
@@ -105,6 +106,12 @@ Template.order.onRendered( function() {
             Bert.alert( error.reason, "danger" );
           } else {
             Bert.alert( "Order submitted!", "success" );
+
+            if ( order.credentials ) {
+              Meteor.loginWithPassword( order.credentials.email, order.credentials.password );
+            }
+
+            Router.go( "/profile" );
           }
         });
       }
@@ -133,7 +140,7 @@ Template.order.helpers({
         price        = currentOrder.get( "price");
 
     if ( type !== "Custom Pizza" ) {
-      var getPizza = pizza.name !== "Pick a pizza!" ? Pizza.findOne( { "_id": pizza } ) : pizza;
+      var getPizza = pizza._id ? Pizza.findOne( { "_id": pizza._id } ) : pizza;
     } else {
       var getPizza = {
         name: "Build your custom pizza up above!",
@@ -164,7 +171,13 @@ Template.order.events({
     }
   },
   'click .pizza': function( event, template ) {
-    template.currentOrder.set( "pizza", this._id );
+    template.currentOrder.set( "pizza", this );
+
+    if ( this.custom ) {
+      template.currentOrder.set( "type", "My Pizzas" );
+    } else {
+      template.currentOrder.set( "type", "Popular Pizzas" );
+    }
   },
   'submit form': function( event ) {
     event.preventDefault();

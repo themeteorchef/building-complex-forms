@@ -52,7 +52,7 @@ PizzaSchema = new SimpleSchema({
   },
   "ownerId": {
     type: String,
-    label: "Pizza Owner",
+    label: "Pizza Owner's User ID",
     optional: true
   }
 });

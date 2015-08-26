@@ -26,7 +26,22 @@ Template.signup.onRendered(function(){
         password: $('[name="password"]').val()
       };
 
-      Accounts.createUser( { email: user.email, password: user.password }, function( error, userId ){
+      Accounts.createUser( {
+        email: user.email,
+        password: user.password,
+        profile: {
+          customer: {
+            userId: user._id,
+            name: "",
+            streetAddress: "",
+            secondaryAddress: "",
+            city: "",
+            state: "",
+            zipCode: "",
+            telephone: ""
+          }
+        }
+      }, function( error, userId ){
         if( error ) {
           Bert.alert(error.reason, 'danger');
         } else {

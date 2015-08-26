@@ -7,5 +7,8 @@ Template.buildPizza.helpers({
   },
   toppings: function(){
     return Meteor.settings.public.toppings;
+  },
+  sizes: function(){
+    return Meteor.settings.public.sizes;
   }
 });

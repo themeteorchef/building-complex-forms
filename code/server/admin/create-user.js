@@ -5,27 +5,16 @@ Accounts.onCreateUser( function( options, user ) {
   // callback and inserting a blank document associated *to* that user into our
   // customers collection. Neat!
 
-  var customer = {
-    userId: user._id,
-    name: "",
-    streetAddress: "",
-    secondaryAddress: "",
-    city: "",
-    state: "",
-    zipCode: "",
-    telephone: ""
-  };
-
   if ( options.profile && options.profile.customer ) {
     customer        = options.profile.customer;
     customer.userId = user._id;
 
-    // We don't actually want to store this in the user profile object, so
-    // remove it so it's not inserted by accident.
+    // We don't actually want to store this in the user profile (we just use profile
+    // as a piggyback mechanism) object, so remove it so it's not inserted by accident.
     delete options.profile;
-  }
 
-  Customers.insert( customer );
+    Customers.insert( customer );
+  }
 
   if ( options.profile ) {
     user.profile = options.profile;

@@ -4,8 +4,20 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="form-group">
-            <label>Custom Pizza Name </label>
+            <label>Custom Pizza Name</label>
             <input type="text" class="form-control" name="customPizzaName">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <h4 class="page-header">Pizza Size</h4>
+            <select name="size" class="form-control">
+            {{#each sizes}}
+              <option value="{{this}}">{{this}}"</option>
+            {{/each}}
+            </select>
           </div>
         </div>
       </div>

@@ -1,0 +1,16 @@
+<template name="orders">
+  {{#each orders}}
+    <div class="panel panel-default pizza">
+      <div class="panel-body">
+        <p><strong>Date Ordered:</strong> {{date}}</p>
+        {{#with pizza this.pizzaId}}
+          <p><strong>Pizza</strong>: {{name}}</p>
+        {{/with}}
+
+        {{#with customer this.userId}}
+          <p><strong>Sent to:</strong> {{name}}</p>
+        {{/with}}
+      </div>
+    </div>
+  {{/each}}
+</template>

@@ -24,9 +24,9 @@ OrdersSchema = new SimpleSchema({
     type: String,
     label: "ID of Pizza Ordered"
   },
-  "easyOrder": {
-    type: Boolean,
-    label: "Is this an easy order?"
+  "date": {
+    type: String,
+    label: "Date Pizza Was Ordered"
   }
 });
 
