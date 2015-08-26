@@ -1,7 +1,7 @@
 ##### The Meteor Chef
 ###### \#011 - Building Complex Forms
 
-In this recipe...
+In this recipe, we'll learn how to build a complex form made up of multiple templates. We'll learn how to handle different types of user input, control the shape of our data using a schema, and work in a bit of validation to ensure the data we insert into our database is clean. We'll also learn how to use ReactiveDict to help us manage form state.
 
 [Read on The Meteor Chef](http://themeteorchef.com/recipes/building-complex-forms)  
 
