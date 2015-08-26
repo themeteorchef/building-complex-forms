@@ -457,7 +457,14 @@ Template.contactInformation.helpers({
 
 [...]
 ```
-Womp. Pretty underwhelming, but very cool. Here, we create another helper that we can use in our `contactInformation` template that returns a `true` or `false` value based on the current context. Remember how we set that earlier in our `{{customer}}` helper? Well, because we used a `{{#with}}` block, we essentially "took over" the data context for our template instance. This means that now, we can access the data assigned way up in the parent template using `Template.instance().data`. Here, then, we just point to our `context` value in our data and evaluate whether it's equal to `"profile"` or not. [Swish](https://www.youtube.com/watch?v=9RaAgI7eZMg)!
+Womp. Pretty underwhelming, but very cool. Here, we create another helper that we can use in our `contactInformation` template that returns a `true` or `false` value based on the current context. Remember how we set that earlier in our `{{customer}}` helper? Well, because we used a `{{#with}}` block, we essentially "took over" the data context for our template instance. 
+
+<figure>
+  <img src="http://cl.ly/image/2r0e0P330C3O/Image%202015-08-26%20at%209.58.49%20AM.png" alt="Our contact information form in the context of our pizza profile.">
+  <figcaption>Our contact information form in the context of our pizza profile.</figcaption>
+</figure>
+
+This means that now, we can access the data assigned way up in the parent template using `Template.instance().data`. Here, then, we just point to our `context` value in our data and evaluate whether it's equal to `"profile"` or not. [Swish](https://www.youtube.com/watch?v=9RaAgI7eZMg)!
 
 So what does this do? Let's look at the markup.
 
@@ -680,23 +687,263 @@ Template.pizzaList.helpers({
 ```
 Two birds, meet your stone. This is really cool. Because we need to use our `pizzaList` template several times, we need a way to pipe in data for it but also make note of its context. Just above when we set our helpers to an object, we were doing that so we could reference both the context and the data here. Recall that we passed our helpers to our dynamic template include's `data` attribute. 
 
+<figure>
+  <img src="http://cl.ly/image/3p0E3m3n0T3p/Image%202015-08-26%20at%209.45.22%20AM.png" alt="How our list of pizzas will look when we finish.">
+  <figcaption>How our list of pizzas will look when we finish.</figcaption>
+</figure>
+
 Following that train of thought, we can see that we make an `isProfile` helper that can be used inside of our `pizzaList` template relying on our `context` value, and down below, our `content` value being set to a new `pizzas` helper that will be tied to an `{{#each pizzas}}` block to output each of our pizzas. What's neat about this is that this `pizzas` helper isn't tied to a specific type of data. We can send it any type of—pizza related—data and it will format the list accordingly in the template! This saves us a lot of duplication but also makes it very easy to understand the flow of data in our templates. Win/win!
 
+<p class="block-header">/client/templates/public/pizza-categories.html</p>
 
+```markup
+<template name="pizzaCategories">
+  [...]
+  <div class="tab-content">
+    {{#if currentUser}}
+      <div role="tabpanel" class="tab-pane active" id="my-pizzas">
+        {{> Template.dynamic template="pizzaList" data=myPizzas}}
+      </div>
+      <div role="tabpanel" class="tab-pane" id="popular-pizzas">
+        {{> Template.dynamic template="pizzaList" data=popularPizzas}}
+      </div>
+    {{else}}
+      <div role="tabpanel" class="tab-pane active" id="popular-pizzas">
+        {{> Template.dynamic template="pizzaList" data=popularPizzas}}
+      </div>
+    {{/if}}
+    [...]
+  </div>
+</template>
+```
+Back in our `pizzaCategories` template, we can see this technique being used fir both our `myPizzas` and `popularPizzas` data sources. How cool is that? Using a single template, we get the same styles but pipe in different data. Polish off that Swiss Army Knife.
 
+With this in place, we can move on to our third tab and template: "Build a Pizza" and the `buildPizza` template.
 
+<p class="block-header">/client/templates/public/build-pizza.html</p>
+
+```markup
+<template name="buildPizza">
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label>Custom Pizza Name</label>
+            <input type="text" class="form-control" name="customPizzaName">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <h4 class="page-header">Pizza Size</h4>
+            <select name="size" class="form-control">
+            {{#each sizes}}
+              <option value="{{this}}">{{this}}"</option>
+            {{/each}}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group clearfix">
+          <div class="col-xs-12 col-sm-6">
+            <h4 class="page-header">Crust</h4>
+            <select name="crust" class="form-control">
+            {{#each crusts}}
+              <option value="{{this}}">{{this}}</option>
+            {{/each}}
+            </select>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <h4 class="page-header">Sauce</h4>
+            <select name="sauce" class="form-control">
+            {{#each sauces}}
+              <option value="{{this}}">{{this}}</option>
+            {{/each}}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12">
+          <h4 class="page-header">Toppings</h4>
+          <div class="row">
+            <div class="col-xs-12 col-sm-6">
+              <h5 class="page-header">Meats</h5>
+              {{#each toppings.meats}}
+                <label class="topping"><input type="checkbox" name="meatTopping" value="{{this}}"> {{this}}</label>
+              {{/each}}
+            </div>
+            <div class="col-xs-12 col-sm-6">
+              <h5 class="page-header">Non-Meats</h5>
+              {{#each toppings.nonMeats}}
+                <label class="topping"><input type="checkbox" name="nonMeatTopping" value="{{this}}"> {{this}}</label>
+              {{/each}}
+            </div>
+          </div> <!-- Holy-->
+        </div> <!-- Nested -->
+      </div> <!-- Div's -->
+    </div> <!-- Batman! -->
+  </div> <!-- Batman! -->
+</template>
+```
+Despite it sounding like a really complicated step, our `buildPizza` template is actually quite simplistic. It's got a few form fields, some dropdown lists, but nothing that wild. Hm. The tricky party with this will come later when we need to get these values _back_. For now, let's talk about how this template is getting it's data.
 
 #### Default values in settings.json
+As part of our ordering process, customers will be able to build a custom pizza. In order to facilitate this process, we need a way to give them all of the "parts" of a pizza. To do this, we can store some basic data in our [settings.json file](themeteorchef.com/snippets/making-use-of-settings-json). 
 
-### Setting Up Routes
-#### Defining Routes
-#### Authenticating Routes
+<div class="note">
+  <h3>Just for simplicty sake <i class="fa fa-warning"></i></h3>
+  <p>Here, we're loading in this data using a settings file for simplicty sake. In a real application, we'd likely tie this into a collection that was managed via a backend interface. There isn't anything wrong with this, but generally our settings file is reserved for application settings and configuration. Whether the info here should be added there is up for debate :)</p>
+</div>
 
-### Profile
+First, let's take a peek at our settings file and see what sort of data we're making available. After that, we'll look at the template logic and see how it's all glued together.
 
-### Order Form
+<p class="block-header">settings-development.json</p>
+
+```javascript
+{
+  "public": {
+    "toppings": {
+      "meats": [
+        "Sausage",
+        "Pepperoni",
+        "Bacon",
+        "Ham",
+        "Beef"
+      ],
+      "nonMeats": [
+        "Banana Peppers",
+        "Green Peppers",
+        "Mushrooms",
+        "Black Olives",
+        "Onions",
+        "Feta Cheese",
+        "Jalapeno Peppers",
+        "Pineapple"
+      ]
+    },
+    "crusts": [
+      "Regular",
+      "Thin",
+      "Deep Dish",
+      "Pan"
+    ],
+    "sauces": [
+      "Tomato",
+      "Roboust Tomato",
+      "Alfredo",
+      "Barbecue"
+    ],
+    "sizes": [
+      10,
+      12,
+      14,
+      16
+    ]
+  }
+}
+```
+Very simple. Nested inside of our `public` object, we've added a few types of information that our user will be able to choose from when customizing their pizza: `toppings`, `crusts`, `sauces`, and `sizes`. In order to make these useful then, we need to map each to an element in our form we defined above. It's really simple, let's take a peek.
+
+<p class="block-header">/client/templates/public/build-pizza.js</p>
+
+```javascript
+Template.buildPizza.helpers({
+  crusts: function(){
+    return Meteor.settings.public.crusts;
+  },
+  sauces: function(){
+    return Meteor.settings.public.sauces;
+  },
+  toppings: function(){
+    return Meteor.settings.public.toppings;
+  },
+  sizes: function(){
+    return Meteor.settings.public.sizes;
+  }
+});
+```
+Well that's certainly...spartan. Yep! The name of the game here is simplicity. Again, we could easily replace these with database queries, but this gives us a quick and easy way to manage some static data in our app without jumping through a lot of hoops. Now, when we load up our order form and view the "Build a Pizza" tab, we should see something like this:
+
+<figure>
+  <img src="http://cl.ly/image/2c0j2o1P401u/Image%202015-08-26%20at%209.43.51%20AM.png" alt='The "Build a Pizza" interface in our form.'>
+  <figcaption>The "Build a Pizza" interface in our form.</figcaption>
+</figure>
+
+Pretty cool, right? As you saw above, we're just using a series of `{{#each}}` blocks to output the information we've piped in from our settings file. Incredibly simple, but has a huge impact on our form. With this in place, we've finished up our pizza categories portion of our order form. Next, let's focus in on adding our contact information block from earlier along with a few other things.
+
+```markup
+<template name="order">
+  <div class="jumbotron text-center">
+    <h2>Place an Order</h2>
+    <p>Tell us what pizza you want and we'll put it on our rocketship to you in less than 30 minutes!</p>
+  </div>
+
+  <form id="place-order">
+    [...]
+
+    <h3 class="page-header">Where should we send your pizza?</h3>
+
+    {{#with customer}}
+      {{> Template.dynamic template="contactInformation"}}
+    {{/with}}
+
+    {{#unless currentUser}}
+      <h3 class="page-header">Create a pizza profile</h3>
+      <p>Specify a username and password for your pizza profile. This is <strong>required to place your order</strong>.</p>
+      {{> profileSignup}}
+    {{/unless}}
+
+    <h3 class="page-header">Confirm and send your order</h3>
+    {{#with order}}
+      {{> orderConfirmation}}
+    {{/with}}
+
+    <div class="submit-row">
+      <input type="submit" class="btn btn-success" value="Send My Order!">
+    </div>
+  </form>
+</template>
+```
+
+A handful of items here, but don't worry we'll step through each. First and most exciting, we can see that we've added in a dynamic include to our `contactInformation` template. Using our `{{#with}}` block trick from earlier, we pull in our customer data. Real quick, let's look at how that works at the logic level.
+
+<p class="block-header">/client/templates/public/order.js</p>
+
+```javascript
+Template.order.helpers({
+  customer: function() {
+    if ( Meteor.userId() ) {
+      var getCustomer = Customers.findOne( { "userId": Meteor.userId() } );
+    } else {
+      var getCustomer = {};
+    }
+
+    if ( getCustomer ) {
+      getCustomer.context = "order";
+      return getCustomer;
+    }
+  }
+});
+```
+Some familiar stuff coming into play. Recall that we have to account for two states when it comes to our order form: when a user is logged in and when they're not. Here, we can see ourselves handling this by using an if block where we return a customer from the `Customers` collection if we have a current user, and if not, just returning an empty object. 
+
+We also bring back our technique of setting a context on the customer document just before we return it to the template. Where earlier we set our context to `"profile"`, now we rely on `"order"` because we're in the order form. This ensures that all of that profile-only functionality doesn't show up here. Though not terribly thrilling, here is the result we get:
+
+<figure>
+  <img src="http://cl.ly/image/1v2n3m300u1B/Image%202015-08-26%20at%209.56.32%20AM.png" alt="Our contact information form in the context of our order form.">
+  <figcaption>Our contact information form in the context of our order form.</figcaption>
+</figure>
+
+Notice that unlike in our Pizza Profile from earlier, we don't see the green "Save Profile Information" button because it's blocked by our `{{#if isProfile}}` block inside of our `contactInformation` template. Think about how that's working for a second. Isn't that cool?
 
 ### Placing Orders
 #### Defining a modular function
 #### Handling the order
+
+### Filling out our profile
+
 #### Showing the order confirmation
