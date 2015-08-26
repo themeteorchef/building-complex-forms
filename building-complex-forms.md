@@ -277,7 +277,7 @@ createPizzas = function() {
       },
       "sauce": "Tomato",
       "size": 14,
-      "price": 10000,
+      "price": 1000,
       "custom": false
     },
     {
@@ -289,7 +289,7 @@ createPizzas = function() {
       },
       "sauce": "Robust Tomato",
       "size": 12,
-      "price": 15000,
+      "price": 1500,
       "custom": false
     },
     {
@@ -301,7 +301,7 @@ createPizzas = function() {
       },
       "sauce": "Tomato",
       "size": 12,
-      "price": 10000,
+      "price": 1000,
       "custom": false
     }
   ];
@@ -939,6 +939,76 @@ We also bring back our technique of setting a context on the customer document j
 </figure>
 
 Notice that unlike in our Pizza Profile from earlier, we don't see the green "Save Profile Information" button because it's blocked by our `{{#if isProfile}}` block inside of our `contactInformation` template. Think about how that's working for a second. Isn't that cool?
+
+Hanging in there? We've got a few more things to cover. Next, let's tackle that `profileSignup` form we include in our order form if there isn't a current user logged in.
+
+<p class="block-header">/client/templates/public/order.html</p>
+
+```markup
+{{#unless currentUser}}
+  <h3 class="page-header">Create a pizza profile</h3>
+  <p>Specify a username and password for your pizza profile. This is <strong>required to place your order</strong>.</p>
+  {{> profileSignup}}
+{{/unless}}
+```
+For reference, this is how our include lives in the order form. Let's take a look at that `profileSignup` template real quick.
+
+<p class="block-header">/client/templates/public/profile-signup.html</p>
+
+```markup
+<template name="profileSignup">
+  <div class="row">
+    <div class="col-xs-12 col-sm-6">
+      <div class="form-group">
+        <label for="emailAddress">Email Address</label>
+        <input type="email" class="form-control" name="emailAddress">
+      </div>
+      <div class="form-group">
+        <label for="password">Password <span class="text-muted">(at least six characters)</span></label>
+        <input type="password" class="form-control" name="password">
+      </div>
+    </div>
+  </div>
+</template>
+```
+Well...okay then! Dirt simple. This gives us an `emailAddress` and `password` field to display if we don't have a current user. This means that if a user attempts to place an order without being logged in, we ask them for an email address and password to "save" their order information. What's neat about this is that we'll be able to create a user account for this user without them having to do it first. The shortest path between yourself and pizza is a straight line. Repeat that.
+
+Great. Now, let's look at the very last part of our order form: the order confirmation area.
+
+<figure>
+  <img src="http://cl.ly/image/3p3h0G2h3y45/Image%202015-08-26%20at%2010.08.18%20AM.png" alt="What we're trying to achieve: a summary of our order.">
+  <figcaption>What we're trying to achieve: a summary of our order.</figcaption>
+</figure>
+
+Because we want to be super helpful to our customers, it seems wise to add an order confirmation area just before we send in orders. This allows our customer to confirm that they're getting the pizza they asked for as well as how much it will cost. We've watered this down a bit for simplicity, but you could beef it up quite a bit if you found yourself building a pizza app! Real quick, let's take a peek at the markup and then see how it's wired up.
+
+<p class="block-header">/client/templates/public/order-confirmation.html</p>
+
+```markup
+<template name="orderConfirmation">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Pizza</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{#if type}}{{type}} &mdash; {{/if}}{{pizza.name}}</td>
+        <td class="text-right">{{toUsd price}}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td class="text-right">Total</td>
+        <td class="text-right">{{toUsd price}}</td>
+      </tr>
+    </tfoot>
+  </table>
+</template>
+```
+Pretty basic. Here we just have a simple `<table>` element with a bit of structure and a few references to template helpers that we'll see in a bit. First, though, we should call out to something unique here. Remember that we've defined the schema for our pizza to include a `price` field that expects a `Number` value. In expectation of a payment service—we don't include this here but it's good to practice—requiring us to deliver prices in _cents_, we've stored the price for each of our pizza's with a cents value. So, a $10 pizza is referenced as `10000` or ten thousand cents.
 
 ### Placing Orders
 #### Defining a modular function
