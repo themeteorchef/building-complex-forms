@@ -48,7 +48,7 @@ Our `Customers` collection will store contact information for each of our custom
 <p class="block-header">/collections/orders.js</p>
 
 ```bash
-Customers = new Meteor.Collection( 'customers' );
+Orders = new Meteor.Collection( 'orders' );
 ```
 Our `Orders` collection will store _orders_ placed by our customers.
 
@@ -228,7 +228,7 @@ Meteor.publish( 'order', function(){
 
   if ( user ) {
     var data = [
-      Pizza.find(),
+      Pizza.find( { $or: [ { "custom": true, "ownerId": user }, { "custom": false } ] } ),
       Customers.find( { "userId": user } )
     ];
   } else {
