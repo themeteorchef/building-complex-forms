@@ -1496,6 +1496,42 @@ Yeah? Yeah. At this point, this should look pretty familiar. We're adding two te
   {{/each}}
 </template>
 ```
+So this is a little odd. Do the nature of how our orders are structured—they only contain references to other information—we need a way to loop through our orders, but still pull in the associated data for the items referenced by our order. How do we do it?
 
+First, we start by looping over our orders like we would with any other list of data. Inside, though, we use `{{#with}}` helpers to grab the data we need from the other collections. Notice, too, that we define each of these with a helper name as well as passing an additional value that corresponds to a field on the currently looped order. So, for each order we get back here, we grab it's `pizzaId` via `this.pizzaId` and it's `userId` via `this.userId`. This may not make complete sense so let's take a peek at the logic powering it.
 
-#### Showing the order confirmation
+<p class="block-header">/client/templates/authenticated/orders.js</p>
+
+```javascript
+Template.orders.helpers({
+  orders: function() {
+    var getOrders = Orders.find();
+
+    if ( getOrders ) {
+      return getOrders;
+    }
+  },
+  pizza: function( pizzaId ) {
+    var getPizza = Pizza.findOne( { "_id": pizzaId } );
+
+    if ( getPizza ) {
+      return getPizza;
+    }
+  },
+  customer: function( userId ) {
+    var getCustomer = Customers.findOne( { "userId": userId } );
+
+    if ( getCustomer ) {
+      return getCustomer;
+    }
+  }
+});
+```
+Hot dog, right? Notice that we can snag the values we pass in our `{{#with}}` blocks as an argument for each of our helpers. Once we have this value, we simply take it and pass it to a `findOne()` on our respective collections and get the data we need. Bond. Meteor Bond. `</lamejoke>`.
+
+Okay...do you see what this means? We're done! Finished! Complete! Over it! Pack your bag and head to the bar becasue this was an _insane amount of work_.
+
+Alas, we now understand how to wire up complex forms in Meteor. It wasn't the easiest thing in the world, but as we've seen, Meteor can help us simplify this process significantly.
+
+### Wrap Up & Summary
+In this recipe we learned how to create and handle complex forms. We learned how to make use of dynamic templates to reduce duplication of markup, some neats tricks involving the `ReactiveDict` package, and even learned how to use a spot of functional programming to reduce an otherwise complex process into a single method!
