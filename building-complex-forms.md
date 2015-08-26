@@ -1008,12 +1008,494 @@ Because we want to be super helpful to our customers, it seems wise to add an or
   </table>
 </template>
 ```
-Pretty basic. Here we just have a simple `<table>` element with a bit of structure and a few references to template helpers that we'll see in a bit. First, though, we should call out to something unique here. Remember that we've defined the schema for our pizza to include a `price` field that expects a `Number` value. In expectation of a payment service—we don't include this here but it's good to practice—requiring us to deliver prices in _cents_, we've stored the price for each of our pizza's with a cents value. So, a $10 pizza is referenced as `10000` or ten thousand cents.
+
+Pretty basic. Here we just have a simple `<table>` element with a bit of structure and a few references to template helpers that we'll see in a bit. First, though, we should call out to something unique here. Remember that we've defined the schema for our pizza to include a `price` field that expects a `Number` value. In expectation of a payment service—we don't include this here but it's good to practice—requiring us to deliver prices in _cents_, we've stored the price for each of our pizza's with a cents value. So, a $10 pizza is referenced as `1000` or one thousand cents.
+
+Of course, we don't want to display `1000` in our template as that would be confusing. Instead, we've setup a template helper to convert this value to something that's a little more human friendly. Let's take a look.
+
+<p class="block-header">/client/helpers/helpers-ui.js</p>
+
+```javascript
+UI.registerHelper( 'toUsd', function( value ) {
+  return "$" + ( value / 100 );
+});
+```
+
+Pretty simple, but good to see. Here, we take the value (in cents) passed to our helper and divide it by a hundred. Before we send it back to our helper, we prefix it with a `$` USD symbol. Keep in mind, this is American Arrogance at work. If we were supporting other countries, too, this would be a little more complicated and we'd likely use a [currency library](https://atmospherejs.com/lepozepo/accounting) to help us with the heavy lifting. Make sense? Cool! 
+
+Let's look at the logic for our `orderConfirmation` template. Remember that we're using a `{{#with order}}` block helper to pipe data in, so we're actually going to look at the logic file for our `order.html` template.
+
+<p class="block-header">/client/templates/public/order.js</p>
+
+```javascript
+Template.order.helpers({
+  [...]
+  order: function() {
+    var currentOrder = Template.instance().currentOrder,
+        type         = currentOrder.get( "type" ),
+        pizza        = currentOrder.get( "pizza" ),
+        price        = currentOrder.get( "price");
+
+    if ( type !== "Custom Pizza" ) {
+      var getPizza = pizza._id ? Pizza.findOne( { "_id": pizza._id } );
+    } else {
+      var getPizza = {
+        name: "Build your custom pizza up above!",
+        price: 1000
+      }
+    }
+
+    if ( getPizza ) {
+      return {
+        type: pizza.name !== "Pick a pizza!" ? type : null,
+        pizza: getPizza,
+        price: getPizza.price
+      }
+    }
+  }
+});
+```
+A lot going on here. Remember earlier when we defined our `ReactiveDict` and assigned it to our template instance as `this.currentOrder`. This is where it really comes into play. Here, we're creating a "summary" of our order and tweaking the information that's displayed based on our different use cases. Here, our test case is for whether or not our order is for a Custom Pizza, or one of our customer's existing pizzas or our Popular Pizzas. Let that soak in.
+
+To test this, we call on the `type` value of our `currentOrder` variable that we set earlier as a default. Remember earlier when we set it up so that when our tab is clicked, we set the type? This is where it's used. Here, if we're _not_ building a custom pizza, we want to lookup the pizza selected in our `Pizza` collection. Wait...when did we set that? Ah! We haven't yet. Real quick, let's scroll down a bit to our `order` template's event maps to see how we're setting which pizza get's selected.
+
+<p class="block-header">/client/templates/public/order.js</p>
+
+```javascript
+Template.order.events({
+  [..]
+  'click .pizza': function( event, template ) {
+    template.currentOrder.set( "pizza", this );
+
+    if ( this.custom ) {
+      template.currentOrder.set( "type", "My Pizzas" );
+    } else {
+      template.currentOrder.set( "type", "Popular Pizzas" );
+    }
+  },
+  [...]
+});
+```
+This is interesting. Here, whenever an item inside our `order` template with the class `.pizza` is clicked, we want to get the data from _that template instance_ and set it equal to the `pizza` property in our ReactiveDictionary `this.currentOrder`. Because each of our pizza's is being output in an `{{#each}}` block within our `pizzaList` template, we know that `this` inside of our event handler is equal to _the data for that template_. That's confusing. Here's how it looks in action:
+
+<figure>
+  <img src="http://cl.ly/image/0e1i0e1W3T1m/data-context-example.gif" alt="Demonstration of data context changing inside of an each block.">
+  <figcaption>Demonstration of data context changing inside of an each block.</figcaption>
+</figure>
+
+Make a little morse sense? So, when we click on a pizza—either a Popular Pizza or one of our customer's custom pizzas—we set the `pizza` value on our `this.currentOrder` dictionary to the data context of the _clicked_ pizza.
+
+<div class="note">
+  <h3>How is the pizza being selected? <i class="fa fa-warning"></i></h3>
+  <p>We haven't covered this here, but inside of the <code>pizza</code> template that's output in our pizza list's <code>{{#each}}</code> block, we've defined an event for setting a <code>.selected</code> class when an item is clicked. To see how it works, <a href="https://github.com/themeteorchef/building-complex-forms/blob/master/code/client/templates/public/pizza.js">head over to the source</a>.</p>
+</div>
+
+Notice that in addition to setting the clicked pizza on our `this.currentOrder` dictionary, we also set the `type` value on our dictionary as well to differentiate between one of our customer's pre-made pizzas and our popular pizzas. Phew! Making sense? Let's pull back in that logic for `orderConfirmation` template.
+
+<p class="block-header">/client/templates/public/order.js</p>
+
+```javascript
+Template.order.helpers({
+  [...]
+  order: function() {
+    var currentOrder = Template.instance().currentOrder,
+        type         = currentOrder.get( "type" ),
+        pizza        = currentOrder.get( "pizza" ),
+        price        = currentOrder.get( "price");
+
+    if ( type !== "Custom Pizza" ) {
+      var getPizza = pizza._id ? Pizza.findOne( { "_id": pizza._id } ) : pizza;
+    } else {
+      var getPizza = {
+        name: "Build your custom pizza up above!",
+        price: 1000
+      }
+    }
+
+    if ( getPizza ) {
+      return {
+        type: pizza.name !== "Pick a pizza!" ? type : null,
+        pizza: getPizza,
+        price: getPizza.price
+      }
+    }
+  }
+});
+```
+This should be making some sense now. Depending on the different states triggered by our user's interaction with the form, we're setting the `type` and `pizza` values. This way, as our user clicks on pizzas or attempts to build a custom one, our `orderConfirmation` template updates to reflect their choices! This may take a bit of studying to fully understand, so take a few minutes to read through it and [play with the demo](http://tmc-011-demo.meteor.com).
+
+Okay, we're getting closer. Now that we have the pieces of our form built out and wired up, we need to actually handle _placing an order_. This is pretty involved, so if need be take a quick break!
 
 ### Placing Orders
-#### Defining a modular function
+So, the final step here is actually getting an order placed. We need to do two things to get this working:
+
+1. Validate the data we're sending to the server from the client and prevent incorrect and unwated data from hitting the server.
+2. Once on the server, perform a series of inserts into our various collections on a _conditional_ basis depending on the data we've received from the client.
+
+Let's take a look at that first part now: validating on the client.
+
+#### Validation and form submission
+We're going to start by handling the validation of our order form in the `onRendered` callback of our `order` template so we can make use of the jQuery Validation library we get access to via [Base](https://github.com/themeteorchef/base#packages-included).
+
+<p class="block-header">/client/templates/public/order.js</p>
+
+```javascript
+Template.order.onRendered( function() {
+  [...]
+  
+  $( "#place-order" ).validate({
+    rules: {
+      customPizzaName: {
+        required: true
+      },
+      name: {
+        required: true
+      },
+      telephone: {
+        required: true
+      },
+      streetAddress: {
+        required: true
+      },
+      city: {
+        required: true
+      },
+      state: {
+        required: true
+      },
+      zipCode: {
+        required: true
+      },
+      emailAddress: {
+        required: true,
+        email: true
+      },
+      password: {
+        required: true,
+        minlength: 6
+      }
+    },
+    submitHandler: function() {
+	  [...]
+    }
+  });
+});
+```
+Here, we begin by defining some validation rules for our order template. This may seem odd, because we're referencing values that don't actually live within our `order` template. What gives? This is one of the coolest parts about Meteor. By the time this loads up, all of our templates will be included directly into the order template, meaning, our validation can see all of those fields in the DOM! So, in turn, we can save ourselves a lot of trouble by defining our validation rules here instead of in the logic for individual teampltes.
+
+It's important to point out that we're not actually validating every single field in our order form. What gives? Well, a few things. First, some of our field elements are optional, meaning it doesn't matter if the user does anything with them. Second, some of our field elements—like our crust selection dropdown in the pizza builder—already have a default selected, meaning the user can't "clear it out." Finally, as in the case of our pre-made pizza selections, we want to handle the validation of those items a bit differently as they don't behave like traditional form elements.
+
+Once we've added this, if we try to submit our form we'll find that our validation kicks in and prevents our `submitHandler` from being called until all of our validation passes. Let's look at that `submitHandler` now to see how we validate things like picking a pizza as well as sending all of this to the server.
+
+<p class="block-header">/client/templates/public/order.js</p>
+
+```javascript
+Template.order.onRendered( function() {
+
+  var template = Template.instance();
+
+  $( "#place-order" ).validate({
+    [...]
+    submitHandler: function() {
+      var orderData = template.currentOrder;
+          type      = orderData.get( "type" ),
+          pizza     = orderData.get( "pizza" ),
+          order     = {};
+
+      if ( Meteor.user() ) {
+        order.customer = Meteor.userId();
+      } else {
+        order.customer = {
+          name: template.find( "[name='name']" ).value,
+          telephone: template.find( "[name='telephone']" ).value,
+          streetAddress: template.find( "[name='streetAddress']" ).value,
+          secondaryAddress: template.find( "[name='secondaryAddress']" ).value,
+          city: template.find( "[name='city']" ).value,
+          state: template.find( "[name='state']" ).value,
+          zipCode: template.find( "[name='zipCode']" ).value
+        }
+
+        order.credentials = {
+          email: template.find( "[name='emailAddress']").value,
+          password: template.find( "[name='password']").value
+        }
+      }
+
+      if ( type === "Custom Pizza" ) {
+        var meatToppings    = [],
+            nonMeatToppings = [];
+
+        $( "[name='meatTopping']:checked" ).each( function( index, element ) {
+          meatToppings.push( element.value );
+        });
+
+        $( "[name='nonMeatTopping']:checked" ).each( function( index, element ) {
+          nonMeatToppings.push( element.value );
+        });
+
+        var customPizza = {
+          name: template.find( "[name='customPizzaName']" ).value,
+          size: template.find( "[name='size'] option:selected" ).value,
+          crust: template.find( "[name='crust'] option:selected" ).value,
+          sauce: template.find( "[name='sauce'] option:selected" ).value,
+          toppings: {
+            meats: meatToppings,
+            nonMeats: nonMeatToppings
+          },
+          custom: true,
+          price: 10000
+        };
+      }
+
+      if ( pizza.name === "Pick a pizza!" ) {
+        Bert.alert( "Make sure to pick a pizza!", "warning" );
+      } else {
+        order.pizza = pizza._id ? pizza._id : customPizza;
+
+        Meteor.call( "placeOrder", order, function( error, response ) {
+          if ( error ) {
+            Bert.alert( error.reason, "danger" );
+          } else {
+            Bert.alert( "Order submitted!", "success" );
+
+            if ( order.credentials ) {
+              Meteor.loginWithPassword( order.credentials.email, order.credentials.password );
+            }
+
+            Router.go( "/profile" );
+          }
+        });
+      }
+    }
+  });
+});
+```
+Yeah, that's scary looking. It is, but we're just showing everything here so you can understand the flow. Let's break this into parts an explain each one.
+
+```javascript
+Template.order.onRendered( function() {
+  var template = Template.instance();
+
+  $( "#place-order" ).validate({
+    [...]
+    submitHandler: function() {
+      var orderData = template.currentOrder;
+          type      = orderData.get( "type" ),
+          pizza     = orderData.get( "pizza" ),
+          order     = {};
+    }
+  });
+});
+```
+Okay. In the first part of our submission proccess, we're setting up some variables to use for later. Notice that the first three we define are all referencing our `this.currentOrder` dictionary that we setup earlier. In order to get access to this, just outside of our validation call, we create a variable `template` and assign it to `Template.instance()`. This ensures that within our `submitHandler`, we can get access to the template instance and it's data. With these in place, we can start to grab some data from our form.
+
+#### Grabbing user data
+The next thing we need to do is grab our user's data. Remember, we have to think about two states: when there's a logged in user and when there's not.
+
+```javascript
+if ( Meteor.user() ) {
+	order.customer = Meteor.userId();
+} else {
+  order.customer = {
+    name: template.find( "[name='name']" ).value,
+    telephone: template.find( "[name='telephone']" ).value,
+    streetAddress: template.find( "[name='streetAddress']" ).value,
+    secondaryAddress: template.find( "[name='secondaryAddress']" ).value,
+    city: template.find( "[name='city']" ).value,
+    state: template.find( "[name='state']" ).value,
+    zipCode: template.find( "[name='zipCode']" ).value
+  }
+
+  order.credentials = {
+    email: template.find( "[name='emailAddress']").value,
+    password: template.find( "[name='password']").value
+  }
+}
+```
+Pretty clear. First, we check if we have a current user logged in. If we do, we assign the value of `Meteor.userId()` to the `customer` property of the `order` object we defined just before this. If we _do not_ have a user, we know that we need to do two things: create a new customer document in our `Customer` collection and create a _user account_ to associate that customer document with (and, of course, let our user log in). We grab all of our customer data from our `contactInformation` template's fields and assign that to `order.customer`. Then, we grab the user's desired `email` and `password` from the `profileSignup` template and assign those to the `credentials` property in our `order` object. So far so good?
+
+#### Handling a custom pizza
+Next up, we need to handle what happens if our user wants to add a custom pizza.
+
+```javascript
+if ( type === "Custom Pizza" ) {
+  var meatToppings    = [],
+      nonMeatToppings = [];
+
+  $( "[name='meatTopping']:checked" ).each( function( index, element ) {
+  	meatToppings.push( element.value );
+  });
+
+  $( "[name='nonMeatTopping']:checked" ).each( function( index, element ) {
+  	nonMeatToppings.push( element.value );
+  });
+
+  var customPizza = {
+    name: template.find( "[name='customPizzaName']" ).value,
+    size: template.find( "[name='size'] option:selected" ).value,
+    crust: template.find( "[name='crust'] option:selected" ).value,
+    sauce: template.find( "[name='sauce'] option:selected" ).value,
+    toppings: {
+      meats: meatToppings,
+      nonMeats: nonMeatToppings
+    },
+    custom: true,
+    price: 1000
+  };
+}
+```
+Again, we piggyback on our `type` value from our `this.customOrder` dictionary to see if we're building a custom pizza. If we _are_, we start by creating two empty arrays that will hold the toppings our user has checked off in the form. To actually retrieve those values, we simply use jQuery's handy `each()` method to grab all of the checkbox elements with either the name `meatTopping` or `nonMeatTopping`, pushing each into their respective arrays.
+
+Next, we define a `customPizza` object, assigning it a mix of values: fields in the template, a `toppings` object with our two arrays assigned to nested properties, and then two additional properties `custom` and `price` which will help our app identify that this is a custom pizza and that all custom pizza's cost $10. 
+
+#### Assigning the pizza and submitting
+Last step. If you've been following along, we're building up our `order` object to include all of the possible data we'll need on the server. We'll see it in a bit, but this will help us to easily handle all of the conditions that our form presents. Before we jump to the server, we need to define one last field: our pizza.
+
+```javascript
+if ( pizza.name === "Pick a pizza!" ) {
+  Bert.alert( "Make sure to pick a pizza!", "warning" );
+} else {
+  order.pizza = pizza._id ? pizza._id : customPizza;
+
+  Meteor.call( "placeOrder", order, function( error, response ) {
+    if ( error ) {
+      Bert.alert( error.reason, "danger" );
+    } else {
+      Bert.alert( "Order submitted!", "success" );
+
+      if ( order.credentials ) {
+  	    Meteor.loginWithPassword( order.credentials.email, order.credentials.password );
+      }
+
+      Router.go( "/profile" );
+    }
+  });
+}
+```
+Yeah! Pretty easy. First, we check if the name of our pizza is the default value we set earlier. If it _is_, we throw an error via [Bert](https://github.com/themeteorchef/bert) to let the user know they need to pick a pizza. This is our "validation" step for picking a pizza. It's pretty simple/weak, though, so your own PizzaTron 5000 may need something a little more stringent. This does the trick for now, though.
+
+If we have a non-default pizza name, we attempt to assign our `order.pizza` value to one of two things: either the `_id` of the pizza (which means it's one of our pre-made pizzas) or our `customPizza` we setup in the last step. Once we have this, our `order` object is complete.
+
+Last but not least, we attempt to call our `placeOrder` method! This will send our `order` object up to the server for processing. Before we hop over there, let's explain what happens when this method call is successful. We do three things, one on a conditional basis. 
+
+First, we display an "Order submitted!" message to confirm the user's submission. Next, if our `order` object had a `credentials` field—meaning we're creating a new user—we attempt to log that user in with the `email` and `password` they gave us. At this point, we'd expect this to work as we'll be creating a user on the server with the details they gave us. Lastly, we tell our router to redirect the user to their pizza profile. Notice, that if we have a user they'll already have access to the profile. If we have a new user, because they're being logged in first, they will _also_ have access to the profile. Twofer!
+
+Deep breaths. Let's jump up to the server and see how this all plays out. It's really neat.
+
+### Submitting an order
+This is my favorite part. In theory, this submission process is pretty tricky, right? We need to potentially create a user and insert data into multiple collections all on a conditional basis. This code is going to look like _crap_. Maybe. Maybe. Let's take a peek.
+
+<p class="block-header">/server/methods/insert/orders.js</p>
+
+```javascript
+Meteor.methods({
+  placeOrder: function( order ){
+    check( order, Object );
+
+    var handleOrder = {
+      createUser: function( credentials ) {
+        try {
+          var userId = Accounts.createUser( credentials );
+          return userId;
+        } catch( exception ) {
+          return exception;
+        }
+      },
+      createCustomer: function( customer, userId ) {
+        customer.userId = userId;
+        var customerId  = Customers.insert( customer );
+
+        return customerId;
+      },
+      createPizza: function( pizza, userId ) {
+        pizza.ownerId = userId;
+
+        var pizzaId = Pizza.insert( pizza );
+        return pizzaId;
+      },
+      createOrder: function( userId, pizzaId ) {
+        var orderId = Orders.insert({
+          userId: userId,
+          pizzaId: pizzaId,
+          date: ( new Date() )
+        });
+        return orderId;
+      }
+    }
+
+    try {
+      var userId     = order.credentials   ? handleOrder.createUser( order.credentials )          : order.customer,
+          customerId = order.customer.name ? handleOrder.createCustomer( order.customer, userId ) : null,
+          pizzaId    = order.pizza.custom  ? handleOrder.createPizza( order.pizza, userId )       : order.pizza;
+          orderId    = handleOrder.createOrder( userId, pizzaId );
+
+      return orderId;
+    } catch( exception ) {
+      return exception;
+    }
+  }
+});
+```
+F-U-N-C-T-I-O-N-A-L P-R-O-G-R-A-M-M-I-N-G! Sing it!
+
+Although a pretty basic version of [functional programming](http://eloquentjavascript.net/1st_edition/chapter6.html), here, we try to ease our fears a bit by creating a series of methods each responsible for one of the tasks we'll need to complete. We won't dive into each of those methods because what they do is pretty simple (inserts and user creation, boring stuff). Instead, we want to call attention to _how_ we're making use of these methods on a _conditional basis_. 
+
 #### Handling the order
 
+Just beneath our `handleOrder` object we set up a [try/catch](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch) block. Inside, we put on our party hat and get totally wasted on web development. Hm. Sure, whatever you say. _Actually_, what we're doing is making use of a series of ternary operators which test the values in our `order` object passed from the server. Notice that each of these are set to a variable. 
+
+Why? Well, except for our `customerId` step—this is where we insert a customer document in our `Customers` collection—, each successive step requires some data from the one before it. By assigning the result of these checks to variables, we can return the necessary data in each of our methods up top and then pass that along to the next call. We do this all the way up until we actually create our order. Once this is complete, we've officially done the following:
+
+1. Created a new user for our non-logged-in users or returned the currently logged in user.
+2. Created a new customer for our non-logged-in users or returned nothing (technically we could add an update step here for users who change their profile data but haven't for brevity).
+3. Inserted either a new custom pizza with our user's information or grabbed a reference to an existing pizza.
+4. Inserted an order into our orders collection.
+
+Hell yeah! When all is said and done, this will ensure that we've handled order placement for both logged-in and non-logged-in users. Pretty cool. At this point, we have a functioning order form. To tie this up in a little bow, though, let's add a little more data to our pizza profile: our order history and our custom pizzas.
+
 ### Filling out our profile
+Last step of all the steps in the world. Hang tight. Let's open up our `pizzaProfile` template and add two new sections real quick.
+
+<p class="block-header">/client/templates/authenticated/pizza-profile.html</p>
+
+```markup
+<template name="pizzaProfile">
+  <div class="jumbotron text-center">
+    <h2>Welcome aboard, pizza pilot!</h2>
+    <p>Review and update your information below or blast off with a new order.</p>
+    <p><a class="btn btn-success btn-lg" href="{{pathFor 'order'}}" role="button">Start an Order</a></p>
+  </div>
+  <h4 class="page-header">Your Orders</h4>
+  {{> orders}}
+
+  <h4 class="page-header">Custom Pizzas</h4>
+  {{> Template.dynamic template="pizzaList" data=myPizzas}}
+
+  [...]
+</template>
+```
+Yeah? Yeah. At this point, this should look pretty familiar. We're adding two templates here: `orders` and a dynamic call to `pizzaList`. Since we've already covered how `pizzaList` works, we can read between the lines and figure out that the `myPizzas` helper we're passing to it in this dynamic include is just fetching our current user's custom pizzas. Easy peasy. Let's look at that `orders` one, though, to see how it's wired up.
+
+```markup
+<template name="orders">
+  {{#each orders}}
+    <div class="panel panel-default pizza">
+      <div class="panel-body">
+        <p><strong>Date Ordered:</strong> {{date}}</p>
+        {{#with pizza this.pizzaId}}
+          <p><strong>Pizza</strong>: {{name}}</p>
+        {{/with}}
+
+        {{#with customer this.userId}}
+          <p><strong>Sent to:</strong> {{name}}</p>
+        {{/with}}
+      </div>
+    </div>
+  {{else}}
+    <p class="alert alert-info">You haven't placed any orders yet! <a href="{{pathFor 'order'}}">Start an order now</a>.</p>
+  {{/each}}
+</template>
+```
+
 
 #### Showing the order confirmation
