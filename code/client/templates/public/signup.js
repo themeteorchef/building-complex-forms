@@ -31,7 +31,7 @@ Template.signup.onRendered(function(){
         password: user.password,
         profile: {
           customer: {
-            userId: user._id,
+            userId: "",
             name: "",
             streetAddress: "",
             secondaryAddress: "",

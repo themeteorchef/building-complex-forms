@@ -15,7 +15,7 @@ Pizza.deny({
   }
 });
 
-PizzaSchema = new SimpleSchema({
+var PizzaSchema = new SimpleSchema({
   "name": {
     type: String,
     label: "Name of Pizza"

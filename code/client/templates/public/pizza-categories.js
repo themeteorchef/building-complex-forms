@@ -7,4 +7,4 @@ Template.pizzaCategories.helpers({
     var pizzas = Pizza.find( { "custom": false } );
     return { "context": "order", "content": pizzas };
   }
-})
+});

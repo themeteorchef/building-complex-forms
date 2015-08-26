@@ -29,5 +29,5 @@ UI.registerHelper( 'toCommaString', function( array ) {
 */
 
 UI.registerHelper( 'toUsd', function( value ) {
-  return "$" + ( value / 1000 );
+  return "$" + ( value / 100 );
 });

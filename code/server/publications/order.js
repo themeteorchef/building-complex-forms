@@ -6,7 +6,7 @@ Meteor.publish( 'order', function(){
 
   if ( user ) {
     var data = [
-      Pizza.find(),
+      Pizza.find( { $or: [ { "custom": true, "ownerId": user }, { "custom": false } ] } ),
       Customers.find( { "userId": user } )
     ];
   } else {

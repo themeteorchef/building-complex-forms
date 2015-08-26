@@ -12,5 +12,7 @@
         {{/with}}
       </div>
     </div>
+  {{else}}
+    <p class="alert alert-info">You haven't placed any orders yet! <a href="{{pathFor 'order'}}">Start an order now</a>.</p>
   {{/each}}
 </template>

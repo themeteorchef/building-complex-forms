@@ -15,7 +15,7 @@ Orders.deny({
   }
 });
 
-OrdersSchema = new SimpleSchema({
+var OrdersSchema = new SimpleSchema({
   "userId": {
     type: String,
     label: "Customer User ID"

@@ -3,10 +3,13 @@ Template.order.onCreated( function() {
 
   this.currentOrder = new ReactiveDict();
 
-  this.currentOrder.set({
-    "type": "My Pizzas",
-    "pizza": { "name": "Pick a pizza!", "price": 0 }
-  });
+  if ( Meteor.user() ) {
+    this.currentOrder.set( "type", "My Pizzas" );
+  } else {
+    this.currentOrder.set( "type", "Popular Pizzas" );
+  }
+
+  this.currentOrder.set( "pizza", { "name": "Pick a pizza!", "price": 0 } );
 });
 
 Template.order.onRendered( function() {
@@ -92,7 +95,7 @@ Template.order.onRendered( function() {
             nonMeats: nonMeatToppings
           },
           custom: true,
-          price: 10000
+          price: 1000
         };
       }
 
@@ -117,7 +120,6 @@ Template.order.onRendered( function() {
       }
     }
   });
-
 });
 
 Template.order.helpers({
@@ -144,7 +146,7 @@ Template.order.helpers({
     } else {
       var getPizza = {
         name: "Build your custom pizza up above!",
-        price: 10000
+        price: 1000
       }
     }
 

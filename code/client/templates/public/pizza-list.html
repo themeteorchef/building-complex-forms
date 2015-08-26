@@ -1,6 +1,6 @@
 <template name="pizzaList">
   {{#each pizzas}}
-    {{> Template.dynamic template="pizza"}}
+    {{> pizza}}
   {{else}}
     {{#if isProfile}}
       <p class="alert alert-info">You don't have any custom pizzas, cadet. Order now to add one.</p>

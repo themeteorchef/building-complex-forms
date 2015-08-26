@@ -15,7 +15,7 @@ Customers.deny({
   }
 });
 
-CustomersSchema = new SimpleSchema({
+var CustomersSchema = new SimpleSchema({
   "name": {
     type: String,
     defaultValue: "",

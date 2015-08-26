@@ -10,7 +10,7 @@ createPizzas = function() {
       },
       "sauce": "Tomato",
       "size": 14,
-      "price": 10000,
+      "price": 1000,
       "custom": false
     },
     {
@@ -22,7 +22,7 @@ createPizzas = function() {
       },
       "sauce": "Robust Tomato",
       "size": 12,
-      "price": 15000,
+      "price": 1500,
       "custom": false
     },
     {
@@ -34,36 +34,15 @@ createPizzas = function() {
       },
       "sauce": "Tomato",
       "size": 12,
-      "price": 10000,
+      "price": 1000,
       "custom": false
-    },
-    {
-      "name": "Custom Tester",
-      "crust": "Deep Dish",
-      "toppings": {
-        "meats": [ 'Pepperoni' ],
-        "nonMeats": [ 'Feta Cheese' ]
-      },
-      "sauce": "Excellent Tomato",
-      "size": 14,
-      "price": 10000,
-      "custom": true,
-      "ownerId": "ABMe8MkTEvxguKKiJ"
     }
   ];
 
-  // var pizzaCount = Pizza.find().count();
-  //
-  // if ( pizzaCount < 1 ) {
-  //   for ( var pizza in pizzas ) {
-  //     Pizza.insert( pizzas[ pizza ] );
-  //   }
-  // }
+  var pizzaCount = Pizza.find().count();
 
-  for ( var pizza in pizzas ) {
-    var lookupPizza = Pizza.findOne( { "name": pizzas[ pizza ].name } );
-
-    if ( !lookupPizza ) {
+  if ( pizzaCount < 1 ) {
+    for ( var pizza in pizzas ) {
       Pizza.insert( pizzas[ pizza ] );
     }
   }
