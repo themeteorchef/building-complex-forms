@@ -488,7 +488,7 @@ We'll skip the boring form fields part and jump straight to the hotness. See wha
 
 <div class="note">
   <h3>Skipping the update logic <i class="fa fa-warning"></i></h3>
-  <p>To save some time—time is money after all—we're going to skip reviewing the logic for updating our contact information from the Pizza Profile. Rest assured, it <em>is</em> imeplemented and you can <a href="https://github.com/themeteorchef/building-complex-forms/blob/master/code/client/templates/public/contact-information.js">find it in the source over on GitHub</a>.</p>
+  <p>To save some time—time is money after all—we're going to skip reviewing the logic for updating our contact information from the Pizza Profile. Rest assured, it <em>is</em> implemented and you can <a href="https://github.com/themeteorchef/building-complex-forms/blob/master/code/client/templates/public/contact-information.js">find it in the source over on GitHub</a>.</p>
 </div>
 
 Now we're cruising. Let's upgrade to the big leagues, though, and start working on the reason we're all here: the order form.
