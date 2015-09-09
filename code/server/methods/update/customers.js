@@ -3,10 +3,11 @@ Meteor.methods({
     check( customer, Customers.simpleSchema() );
 
     try {
-      Customers.update( { "userId": customer.userId }, {
+      var customerId = Customers.update( { "userId": customer.userId }, {
         $set: customer
       });
-      return exampleId;
+
+      return customerId;
     } catch( exception ) {
       return exception;
     }
