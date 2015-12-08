@@ -29,7 +29,7 @@ Our application is going to have two core features:
 2. The ability to create a "Pizza Profile" where the user can store their custom pizzas and contact information, as well as view their order history.
 
 <figure>
-  <img src="http://cl.ly/image/3z130S1D1d0J/Image%202015-08-25%20at%2011.42.36%20PM.png" alt="A screenshot of Pizza Planet's order form.">
+  <img src="https://cl.ly/image/3z130S1D1d0J/Image%202015-08-25%20at%2011.42.36%20PM.png" alt="A screenshot of Pizza Planet's order form.">
   <figcaption>A screenshot of Pizza Planet's order form.</figcaption>
 </figure>
 
@@ -210,13 +210,13 @@ Because `toppings` only contains this `meats` array and another array `nonMeats`
 
 <div class="note info">
   <h3>More on collection2 <i class="fa fa-info"></i></h3>
-  <p>Our usage of collection2 here is pretty simple. If you're curious about how to use collection2 and some of the gotchas involved in working with it, check out <a href="http://themeteorchef.com/snippets/using-the-collection2-package">this snippet</a> on the topic.</p>
+  <p>Our usage of collection2 here is pretty simple. If you're curious about how to use collection2 and some of the gotchas involved in working with it, check out <a href="https://themeteorchef.com/snippets/using-the-collection2-package">this snippet</a> on the topic.</p>
 </div>
 
 Now that we have some structure for our data, we're going to add some publications. Wait...what? Bear with me. We'll be diving into some pretty complicated stuff later on, so it's important that we get this easy stuff out of the way now, even if it's not 100% clear how it will come into play. Don't worry, we'll make sense of it all by the final sentence!
 
 ### Defining publications
-Okay. So, to make our publications a little more efficient, we're going to think about how we define them in terms of where they'll be used. In our app, we'll have two distinct views: the order form and the pizza profile. Each view is going to have multiple pieces of data in it, but we don't want to define multiple publications for each view. How do we get around that? [Complex publications](http://themeteorchef.com/snippets/publication-and-subscription-patterns/#tmc-complex-publication).
+Okay. So, to make our publications a little more efficient, we're going to think about how we define them in terms of where they'll be used. In our app, we'll have two distinct views: the order form and the pizza profile. Each view is going to have multiple pieces of data in it, but we don't want to define multiple publications for each view. How do we get around that? [Complex publications](https://themeteorchef.com/snippets/publication-and-subscription-patterns/#tmc-complex-publication).
 
 Complex publications are just a fancy TMC word for publications that return multiple MongoDB cursors. Generally when we think of publications, we only return a single cursor or `Collection.method()` call. Fortunately, we can return _multiple_ cursors from the same publication, allowing us to consolidate our efforts. Let's take a look at the publication for our order form to start.
 
@@ -242,7 +242,7 @@ Meteor.publish( 'order', function(){
   return this.ready();
 });
 ```
-Not _too_ crazy. First, we give our publication a simple name to identify where it will be used, in this case the `order` form. Inside, we start by grabbing the current user's ID. Remember, [we have access to this from inside publications](http://themeteorchef.com/snippets/publication-and-subscription-patterns/#tmc-simple-publications) as an added security-minded bonus. Next, if we have a logged in user, we create a new variable `data` and assign it to an array with two methods inside: `Pizza.find( { $or: [ { "custom": true, "ownerId": user }, { "custom": false } ] } )` and `Customers.find( { "userId": user } )`. Together, these two calls make up all of the data that we'll need on the order form screen _when a user is logged in_.  
+Not _too_ crazy. First, we give our publication a simple name to identify where it will be used, in this case the `order` form. Inside, we start by grabbing the current user's ID. Remember, [we have access to this from inside publications](https://themeteorchef.com/snippets/publication-and-subscription-patterns/#tmc-simple-publications) as an added security-minded bonus. Next, if we have a logged in user, we create a new variable `data` and assign it to an array with two methods inside: `Pizza.find( { $or: [ { "custom": true, "ownerId": user }, { "custom": false } ] } )` and `Customers.find( { "userId": user } )`. Together, these two calls make up all of the data that we'll need on the order form screen _when a user is logged in_.  
 
 That first one is pretty gnarly. What's that `{ $or ... }` business? This is pretty neat. Here, we can perform "multiple queries" on the same collection using a single call. Using the [MongoDB $or operator](https://docs.mongodb.org/v3.0/reference/operator/query/or/), we can ask MongoDB to give us all of the documents that match different queries. We can pass our separate queries in array and get back a single cursor with the documents matching either query. Wow! This is handy because if we tried to pass two `Pizza.find()` calls in this array with our different queries, we'd get an error. 
 
@@ -250,7 +250,7 @@ The second query here `Customers.find()` is a little more obvious. Here, we expe
 
 Just after this, we provide an `else` statement, setting our `data` variable to a single query. Notice that in this case, if we don't have a currently logged in user, we don't want to look up a `Customers` document. Again, this will make sense later, so just follow along.
 
-Lastly, we return our data if we have any and a call to `this.ready()` to [make sure our publication completes](http://themeteorchef.com/snippets/publication-and-subscription-patterns/#tmc-simple-publications).
+Lastly, we return our data if we have any and a call to `this.ready()` to [make sure our publication completes](https://themeteorchef.com/snippets/publication-and-subscription-patterns/#tmc-simple-publications).
 
 <div class="note">
   <h3>Skipping our pizzaProfile publication <i class="fa fa-warning"></i></h3>
@@ -325,7 +325,7 @@ Okay. Underwhelming, sure, but important (and illustrative)! Now, when our serve
 Now that we've got the basic pieces in place for handling data, we need to figure out how users will move in-and-out of our application. To explain, here's a quick peek at the home page users see when they first visit our application.
 
 <figure>
-  <img src="http://cl.ly/image/2a3k3r2R1u22/Image%202015-08-26%20at%2012.52.59%20AM.png" alt="The Pizza Planet home page.">
+  <img src="https://cl.ly/image/2a3k3r2R1u22/Image%202015-08-26%20at%2012.52.59%20AM.png" alt="The Pizza Planet home page.">
   <figcaption>The Pizza Planet home page.</figcaption>
 </figure>
 
@@ -442,7 +442,7 @@ Template.pizzaProfile.helpers({
   }
 });
 ```
-SO much sneakiness. We're actually going to handle two things here. First, recall that earlier we set up a publication that in part exposes our current user's customer profile via a call to `Customers.find()`. Here, we use [template-level subscriptions](http://themeteorchef.com/snippets/publication-and-subscription-patterns/#tmc-subscribing-in-the-template) to subscribe to our publication by calling `this.subscribe( 'pizzaProfile' );`. Boom! Now, whenver our `pizzaProfile` template is loaded up, we'll get access to all of the data we need for our profile's various pieces. Shred.
+SO much sneakiness. We're actually going to handle two things here. First, recall that earlier we set up a publication that in part exposes our current user's customer profile via a call to `Customers.find()`. Here, we use [template-level subscriptions](https://themeteorchef.com/snippets/publication-and-subscription-patterns/#tmc-subscribing-in-the-template) to subscribe to our publication by calling `this.subscribe( 'pizzaProfile' );`. Boom! Now, whenver our `pizzaProfile` template is loaded up, we'll get access to all of the data we need for our profile's various pieces. Shred.
 
 Okay, main event, that `{{customer}}` helper. Here, we do a standard `.find()` call on our `Customers` collection, pulling in the currently logged-in user. If we get the customer, we set an additional value on it called `context`, setting it to `"profile"`. Again, we'll do something similar later so we can reuse the template for our order form. Once that's set, we return our customer! Now, our `{{#with}}` block will evaulate to `true`, or, "I have data," and render our `contactInformation` template. To understand the significance of this, let's take a peek at the logic for `contactInformation`.
 
@@ -460,7 +460,7 @@ Template.contactInformation.helpers({
 Womp. Pretty underwhelming, but very cool. Here, we create another helper that we can use in our `contactInformation` template that returns a `true` or `false` value based on the current context. Remember how we set that earlier in our `{{customer}}` helper? Well, because we used a `{{#with}}` block, we essentially "took over" the data context for our template instance. 
 
 <figure>
-  <img src="http://cl.ly/image/2r0e0P330C3O/Image%202015-08-26%20at%209.58.49%20AM.png" alt="Our contact information form in the context of our pizza profile.">
+  <img src="https://cl.ly/image/2r0e0P330C3O/Image%202015-08-26%20at%209.58.49%20AM.png" alt="Our contact information form in the context of our pizza profile.">
   <figcaption>Our contact information form in the context of our pizza profile.</figcaption>
 </figure>
 
@@ -608,7 +608,7 @@ Template.order.events({
   [...]
 });
 ```
-A few things to point out. First, notice that in our `order` template's `onCreated` we're subscribing to our `order` publication similar to how we handled our `pizzaProfile` publication earlier. Next, we're defining a new variable on our template instance `this.currentOrder` and assigning it to [an instance of ReactiveDict()](http://themeteorchef.com/snippets/reactive-dict-reactive-vars-and-session-variables/#tmc-reactive-dictionary). 
+A few things to point out. First, notice that in our `order` template's `onCreated` we're subscribing to our `order` publication similar to how we handled our `pizzaProfile` publication earlier. Next, we're defining a new variable on our template instance `this.currentOrder` and assigning it to [an instance of ReactiveDict()](https://themeteorchef.com/snippets/reactive-dict-reactive-vars-and-session-variables/#tmc-reactive-dictionary). 
 
 If you've never seen it before, [ReactiveDict](https://atmospherejs.com/meteor/reactive-dict)—a package we added at the start of this recipe—allows us to keep a _reactive dictionary_ of values. What's neat about it is that we can use it locally like we've done here, assigning it to a template instance. This allows us to store reactive data, but avoid using something that's defined on a more global-basis like Session variables. Fun fact: Session variables are just a wrapper around ReactiveDict.
 
@@ -688,7 +688,7 @@ Template.pizzaList.helpers({
 Two birds, meet your stone. This is really cool. Because we need to use our `pizzaList` template several times, we need a way to pipe in data for it but also make note of its context. Just above when we set our helpers to an object, we were doing that so we could reference both the context and the data here. Recall that we passed our helpers to our dynamic template include's `data` attribute. 
 
 <figure>
-  <img src="http://cl.ly/image/3p0E3m3n0T3p/Image%202015-08-26%20at%209.45.22%20AM.png" alt="How our list of pizzas will look when we finish.">
+  <img src="https://cl.ly/image/3p0E3m3n0T3p/Image%202015-08-26%20at%209.45.22%20AM.png" alt="How our list of pizzas will look when we finish.">
   <figcaption>How our list of pizzas will look when we finish.</figcaption>
 </figure>
 
@@ -792,7 +792,7 @@ With this in place, we can move on to our third tab and template: "Build a Pizza
 Despite it sounding like a really complicated step, our `buildPizza` template is actually quite simplistic. It's got a few form fields, some dropdown lists, but nothing that wild. Hm. The tricky party with this will come later when we need to get these values _back_. For now, let's talk about how this template is getting its data.
 
 #### Default values in settings.json
-As part of our ordering process, customers will be able to build a custom pizza. In order to facilitate this process, we need a way to give them all of the "parts" of a pizza. To do this, we can store some basic data in our [settings.json file](http://themeteorchef.com/snippets/making-use-of-settings-json). 
+As part of our ordering process, customers will be able to build a custom pizza. In order to facilitate this process, we need a way to give them all of the "parts" of a pizza. To do this, we can store some basic data in our [settings.json file](https://themeteorchef.com/snippets/making-use-of-settings-json). 
 
 <div class="note">
   <h3>Just for simplicty sake <i class="fa fa-warning"></i></h3>
@@ -869,7 +869,7 @@ Template.buildPizza.helpers({
 Well that's certainly...spartan. Yep! The name of the game here is simplicity. Again, we could easily replace these with database queries, but this gives us a quick and easy way to manage some static data in our app without jumping through a lot of hoops. Now, when we load up our order form and view the "Build a Pizza" tab, we should see something like this:
 
 <figure>
-  <img src="http://cl.ly/image/2c0j2o1P401u/Image%202015-08-26%20at%209.43.51%20AM.png" alt='The "Build a Pizza" interface in our form.'>
+  <img src="https://cl.ly/image/2c0j2o1P401u/Image%202015-08-26%20at%209.43.51%20AM.png" alt='The "Build a Pizza" interface in our form.'>
   <figcaption>The "Build a Pizza" interface in our form.</figcaption>
 </figure>
 
@@ -936,7 +936,7 @@ Some familiar stuff coming into play. Recall that we have to account for two sta
 We also bring back our technique of setting a context on the customer document just before we return it to the template. Where earlier we set our context to `"profile"`, now we rely on `"order"` because we're in the order form. This ensures that all of that profile-only functionality doesn't show up here. Though not terribly thrilling, here is the result we get:
 
 <figure>
-  <img src="http://cl.ly/image/1v2n3m300u1B/Image%202015-08-26%20at%209.56.32%20AM.png" alt="Our contact information form in the context of our order form.">
+  <img src="https://cl.ly/image/1v2n3m300u1B/Image%202015-08-26%20at%209.56.32%20AM.png" alt="Our contact information form in the context of our order form.">
   <figcaption>Our contact information form in the context of our order form.</figcaption>
 </figure>
 
@@ -978,7 +978,7 @@ Well...okay then! Dirt simple. This gives us an `emailAddress` and `password` fi
 Great. Now, let's look at the very last part of our order form: the order confirmation area.
 
 <figure>
-  <img src="http://cl.ly/image/3p3h0G2h3y45/Image%202015-08-26%20at%2010.08.18%20AM.png" alt="What we're trying to achieve: a summary of our order.">
+  <img src="https://cl.ly/image/3p3h0G2h3y45/Image%202015-08-26%20at%2010.08.18%20AM.png" alt="What we're trying to achieve: a summary of our order.">
   <figcaption>What we're trying to achieve: a summary of our order.</figcaption>
 </figure>
 
@@ -1081,7 +1081,7 @@ Template.order.events({
 This is interesting. Here, whenever an item inside our `order` template with the class `.pizza` is clicked, we want to get the data from _that template instance_ and set it equal to the `pizza` property in our ReactiveDictionary `this.currentOrder`. Because each of our pizza's is being output in an `{{#each}}` block within our `pizzaList` template, we know that `this` inside of our event handler is equal to _the data for that template_. That's confusing. Here's how it looks in action:
 
 <figure>
-  <img src="http://cl.ly/image/0e1i0e1W3T1m/data-context-example.gif" alt="Demonstration of data context changing inside of an each block.">
+  <img src="https://cl.ly/image/0e1i0e1W3T1m/data-context-example.gif" alt="Demonstration of data context changing inside of an each block.">
   <figcaption>Demonstration of data context changing inside of an each block.</figcaption>
 </figure>
 
@@ -1124,7 +1124,7 @@ Template.order.helpers({
   }
 });
 ```
-This should be making some sense now. Depending on the different states triggered by our user's interaction with the form, we're setting the `type` and `pizza` values. This way, as our user clicks on pizzas or attempts to build a custom one, our `orderConfirmation` template updates to reflect their choices! This may take a bit of studying to fully understand, so take a few minutes to read through it and [play with the demo](http://tmc-011-demo.meteor.com).
+This should be making some sense now. Depending on the different states triggered by our user's interaction with the form, we're setting the `type` and `pizza` values. This way, as our user clicks on pizzas or attempts to build a custom one, our `orderConfirmation` template updates to reflect their choices! This may take a bit of studying to fully understand, so take a few minutes to read through it and [play with the demo](https://tmc-011-demo.meteor.com).
 
 Okay, we're getting closer. Now that we have the pieces of our form built out and wired up, we need to actually handle _placing an order_. This is pretty involved, so if need be take a quick break!
 
@@ -1199,7 +1199,7 @@ Template.order.onRendered( function() {
   $( "#place-order" ).validate({
     [...]
     submitHandler: function() {
-      var orderData = template.currentOrder;
+      var orderData = template.currentOrder,
           type      = orderData.get( "type" ),
           pizza     = orderData.get( "pizza" ),
           order     = {};
@@ -1281,7 +1281,7 @@ Template.order.onRendered( function() {
   $( "#place-order" ).validate({
     [...]
     submitHandler: function() {
-      var orderData = template.currentOrder;
+      var orderData = template.currentOrder,
           type      = orderData.get( "type" ),
           pizza     = orderData.get( "pizza" ),
           order     = {};
