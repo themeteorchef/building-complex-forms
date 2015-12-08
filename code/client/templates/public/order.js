@@ -49,7 +49,7 @@ Template.order.onRendered( function() {
       }
     },
     submitHandler: function() {
-      var orderData = template.currentOrder;
+      var orderData = template.currentOrder,
           type      = orderData.get( "type" ),
           pizza     = orderData.get( "pizza" ),
           order     = {};
